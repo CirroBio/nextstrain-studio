@@ -1,0 +1,5 @@
+{
+  "splashComponent": "splash.js",
+  "browserTitle": "Nextstrain Studio",
+  "enableDatasetEditor": true
+}

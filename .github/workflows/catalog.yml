@@ -1,0 +1,27 @@
+name: catalog
+
+# Every dataset in the public catalog must open in the app: valid fields, a unique id, and an
+# Auspice v2 JSON that nextstrain.org or its host serves to other sites. Weekly, so a dataset that
+# disappears upstream is noticed.
+on:
+  pull_request:
+    paths: [catalog/**]
+  push:
+    branches: [main]
+    paths: [catalog/**]
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: node catalog/check.mjs

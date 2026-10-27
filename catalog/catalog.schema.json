@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Nextstrain Studio public catalog",
+  "type": "object",
+  "required": ["datasets"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "datasets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "pathogen", "maintainer", "source", "description"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$", "description": "Unique, stable; used in links" },
+          "title": { "type": "string" },
+          "pathogen": { "type": "string", "description": "Groups datasets on the catalog page" },
+          "maintainer": { "type": "string" },
+          "description": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9-]+$" } },
+          "source": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": ["nextstrain"],
+                "additionalProperties": false,
+                "properties": { "nextstrain": { "type": "string", "description": "A nextstrain.org path: core, staging, community/<owner>/<repo>/... or groups/<name>/..." } }
+              },
+              {
+                "type": "object",
+                "required": ["url"],
+                "additionalProperties": false,
+                "properties": { "url": { "type": "string", "pattern": "^https://", "description": "A main Auspice JSON readable from any site (CORS); sidecars are looked for beside it" } }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

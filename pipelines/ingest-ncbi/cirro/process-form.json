@@ -1,0 +1,41 @@
+{
+  "form": {
+    "type": "object",
+    "name": "Nextstrain: NCBI Virus ingest",
+    "properties": {
+      "taxon_id": {
+        "title": "NCBI taxon",
+        "type": "string",
+        "description": "NCBI taxonomy ID or name, e.g. 64320 for Zika virus."
+      },
+      "released_since": {
+        "title": "Released since",
+        "type": "string",
+        "description": "Only records released on or after this date.",
+        "format": "date"
+      },
+      "complete_only": {
+        "title": "Complete genomes only",
+        "type": "boolean",
+        "default": false,
+        "description": "Only records NCBI marks as complete genomes."
+      },
+      "host": {
+        "title": "Host",
+        "type": "string",
+        "description": "Only records from this host, as an NCBI taxonomy name or ID, e.g. Homo sapiens."
+      }
+    },
+    "required": [
+      "taxon_id"
+    ]
+  },
+  "ui": {
+    "ui:order": [
+      "taxon_id",
+      "released_since",
+      "complete_only",
+      "host"
+    ]
+  }
+}

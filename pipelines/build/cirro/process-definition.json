@@ -1,0 +1,33 @@
+{
+  "id": "process-nextstrain-studio-build-0-1",
+  "name": "Nextstrain build",
+  "desc": "Filters, aligns and builds a time-resolved phylogeny with augur from sequences and metadata, and exports it for Auspice.",
+  "executor": "NEXTFLOW",
+  "category": "Microbial Analysis",
+  "documentationUrl": "https://github.com/CirroBio/nextstrain-studio/tree/main/pipelines/build",
+  "pipelineTypeOverride": "Community",
+  "parentProcessIds": [
+    "custom_dataset",
+    "process-nextstrain-studio-ingest-ncbi-0-1"
+  ],
+  "childProcessIds": [],
+  "dataType": "Nextstrain dataset",
+  "code": {
+    "repository": "GITHUBPUBLIC",
+    "uri": "CirroBio/nextstrain-studio",
+    "script": "pipelines/build/main.nf",
+    "version": "main"
+  },
+  "allowMultipleSources": false,
+  "usesSampleSheet": false,
+  "computeDefaults": [
+    {
+      "executor": "NEXTFLOW",
+      "name": "Default",
+      "json": "s3://<RESOURCES_BUCKET>/<PROCESS_DIRECTORY>/process-compute.config"
+    }
+  ],
+  "paramMapJson": "s3://<RESOURCES_BUCKET>/<PROCESS_DIRECTORY>/process-input.json",
+  "formJson": "s3://<RESOURCES_BUCKET>/<PROCESS_DIRECTORY>/process-form.json",
+  "webOptimizationJson": "s3://<RESOURCES_BUCKET>/<PROCESS_DIRECTORY>/process-output.json"
+}

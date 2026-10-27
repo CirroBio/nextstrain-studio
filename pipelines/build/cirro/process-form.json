@@ -1,0 +1,215 @@
+{
+  "form": {
+    "type": "object",
+    "name": "Nextstrain build",
+    "properties": {
+      "name": {
+        "title": "Dataset name",
+        "type": "string",
+        "description": "Stem of the Auspice JSON written to auspice/<name>.json. Letters, digits, '.', '_' and '-'.",
+        "default": "build",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+      },
+      "title": {
+        "title": "Title",
+        "type": "string",
+        "description": "Shown at the top of the tree in Auspice."
+      },
+      "reference_preset": {
+        "title": "Reference",
+        "type": "string",
+        "description": "A pathogen whose Nextstrain reference GenBank is used. Leave blank to use a GenBank file instead.",
+        "enum": [
+          "zika",
+          "measles-genome",
+          "measles-n450",
+          "mpox-clade-i",
+          "mpox-clade-iib",
+          "dengue-denv1",
+          "dengue-denv2",
+          "dengue-denv3",
+          "dengue-denv4",
+          "rsv-a",
+          "rsv-b"
+        ],
+        "enumNames": [
+          "Zika",
+          "Measles (whole genome)",
+          "Measles (N450)",
+          "Mpox clade I",
+          "Mpox clade IIb",
+          "Dengue serotype 1",
+          "Dengue serotype 2",
+          "Dengue serotype 3",
+          "Dengue serotype 4",
+          "RSV-A",
+          "RSV-B"
+        ]
+      },
+      "reference": {
+        "title": "Reference GenBank",
+        "type": "string",
+        "description": "Used when no preset is chosen. When both are blank, the one GenBank file in the input dataset is used.",
+        "pathType": "dataset",
+        "file": "**/*.{gb,gbk,genbank}",
+        "useS3Path": true
+      },
+      "sequences": {
+        "title": "Sequences",
+        "type": "string",
+        "description": "FASTA of sequences. When blank, the one FASTA in the input dataset is used.",
+        "pathType": "dataset",
+        "file": "**/*.{fasta,fa,fna,fasta.gz,fa.gz,fna.gz,fasta.xz,fa.xz,fna.xz,fasta.zst,fa.zst,fna.zst}",
+        "useS3Path": true
+      },
+      "metadata": {
+        "title": "Metadata",
+        "type": "string",
+        "description": "TSV or CSV with one row per sequence. When blank, the one TSV/CSV in the input dataset is used.",
+        "pathType": "dataset",
+        "file": "**/*.{tsv,csv}",
+        "useS3Path": true
+      },
+      "metadata_id_columns": {
+        "title": "Strain column",
+        "type": "string",
+        "description": "Metadata column holding the sequence names. Comma-separate several to try in order.",
+        "default": "strain"
+      },
+      "exclude": {
+        "title": "Exclude list",
+        "type": "string",
+        "description": "Optional text file of strain names to drop, one per line.",
+        "pathType": "dataset",
+        "file": "**/*.txt",
+        "useS3Path": true
+      },
+      "group_by": {
+        "title": "Subsample: group by",
+        "type": "string",
+        "description": "Comma-separated metadata columns to group by when subsampling, e.g. country,year,month."
+      },
+      "sequences_per_group": {
+        "title": "Subsample: sequences per group",
+        "type": "integer",
+        "description": "Keep at most this many sequences per group.",
+        "minimum": 1
+      },
+      "subsample_max_sequences": {
+        "title": "Subsample: maximum sequences",
+        "type": "integer",
+        "description": "Keep at most this many sequences in total, spread evenly across groups.",
+        "minimum": 1
+      },
+      "min_length": {
+        "title": "Minimum length",
+        "type": "integer",
+        "description": "Drop sequences with fewer valid nucleotides than this.",
+        "minimum": 0
+      },
+      "min_date": {
+        "title": "Earliest date",
+        "type": "string",
+        "description": "Drop sequences dated before this (YYYY-MM-DD or decimal year)."
+      },
+      "max_date": {
+        "title": "Latest date",
+        "type": "string",
+        "description": "Drop sequences dated after this (YYYY-MM-DD or decimal year)."
+      },
+      "timetree": {
+        "title": "Time-resolved tree",
+        "type": "boolean",
+        "default": true,
+        "description": "Infer a timetree from the metadata's date column. Turn off for undated data; tip frequencies are only made with a timetree."
+      },
+      "clock_rate": {
+        "title": "Clock rate",
+        "type": "number",
+        "description": "Fixed substitution rate in substitutions per site per year. Estimated from the data when blank."
+      },
+      "clock_std_dev": {
+        "title": "Clock rate standard deviation",
+        "type": "number",
+        "description": "Uncertainty of a fixed clock rate."
+      },
+      "root": {
+        "title": "Root",
+        "type": "string",
+        "description": "best, least-squares, min_dev or oldest, or one or two strain names (comma-separated) to root on. augur's default (best) when blank."
+      },
+      "coalescent": {
+        "title": "Coalescent model",
+        "type": "string",
+        "description": "Coalescent prior for the timetree: opt, const, skyline, or a number (Tc). None when blank."
+      },
+      "clock_filter_iqd": {
+        "title": "Clock filter (IQD)",
+        "type": "number",
+        "description": "Drop tips whose root-to-tip distance is more than this many interquartile ranges from the clock. Blank or 0 turns it off.",
+        "default": 4
+      },
+      "traits": {
+        "title": "Traits to reconstruct",
+        "type": "string",
+        "description": "Comma-separated metadata columns whose ancestral states are inferred, e.g. country,region."
+      },
+      "color_by": {
+        "title": "Color by",
+        "type": "string",
+        "description": "Comma-separated metadata columns offered as colorings in Auspice."
+      },
+      "geo_resolutions": {
+        "title": "Geographic resolutions",
+        "type": "string",
+        "description": "Comma-separated metadata columns to place on the map, e.g. region,country. Need coordinates from augur's defaults or a lat-longs file."
+      },
+      "auspice_config": {
+        "title": "Auspice config",
+        "type": "string",
+        "description": "Optional auspice_config.json with colorings, filters and display defaults.",
+        "pathType": "dataset",
+        "file": "**/*.json",
+        "useS3Path": true
+      },
+      "lat_longs": {
+        "title": "Lat-longs",
+        "type": "string",
+        "description": "Optional TSV of coordinates: resolution, name, latitude, longitude.",
+        "pathType": "dataset",
+        "file": "**/*.tsv",
+        "useS3Path": true
+      }
+    },
+    "required": []
+  },
+  "ui": {
+    "ui:order": [
+      "name",
+      "title",
+      "reference_preset",
+      "reference",
+      "sequences",
+      "metadata",
+      "metadata_id_columns",
+      "exclude",
+      "group_by",
+      "sequences_per_group",
+      "subsample_max_sequences",
+      "min_length",
+      "min_date",
+      "max_date",
+      "timetree",
+      "clock_rate",
+      "clock_std_dev",
+      "root",
+      "coalescent",
+      "clock_filter_iqd",
+      "traits",
+      "color_by",
+      "geo_resolutions",
+      "auspice_config",
+      "lat_longs"
+    ]
+  }
+}

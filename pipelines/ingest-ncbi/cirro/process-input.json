@@ -1,0 +1,7 @@
+{
+  "outdir": "$.dataset.dataPath",
+  "taxon_id": "$.dataset.params.taxon_id",
+  "released_since": "$.dataset.params.released_since",
+  "complete_only": "$.dataset.params.complete_only",
+  "host": "$.dataset.params.host"
+}

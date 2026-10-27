@@ -1,0 +1,18 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+.nextflow*
+work/
+results/
+__pycache__/
+.DS_Store
+*.log
+*.tsbuildinfo
+.claude/
+
+# Development tenant list; deploy/tenants.json is the published one.
+public/tenants.json
+# Built by viewer/build.cjs
+public/viewer/

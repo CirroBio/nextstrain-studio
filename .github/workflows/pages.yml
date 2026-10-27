@@ -1,0 +1,80 @@
+name: pages
+
+# Tests and builds on every pull request and push; publishes to GitHub Pages from main. The
+# published tenants.json is deploy/tenants.json, not public/tenants.json (the local development
+# copy). Pages must be enabled once: Settings -> Pages -> Source = GitHub Actions. Without a custom
+# domain the app is served under /nextstrain-studio/ (src/auth.ts adapts).
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Pull requests run the build job only, so only the deploy job may publish.
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read # configure-pages reads the site settings
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            viewer/package-lock.json
+
+      - run: npm ci
+      - run: npm ci --prefix viewer
+      - run: npm test
+
+      - id: pages
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+
+      # The base is part of the callback URL registered in each tenant: origin + base.
+      - name: Build
+        run: npm run build
+        env:
+          VITE_BASE: ${{ steps.pages.outputs.base_path || '/nextstrain-studio' }}/
+
+      - name: Use the production tenants
+        run: |
+          node -e '
+            const { tenants } = JSON.parse(require("fs").readFileSync("deploy/tenants.json", "utf8"));
+            const bad = tenants.filter((t) => !t.id || !/^https:\/\/[^/]+$/.test(t.url));
+            if (bad.length) {
+              console.error("deploy/tenants.json needs an id and an https url for every tenant:", bad.map((t) => t.id));
+              process.exit(1);
+            }'
+          cp deploy/tenants.json dist/tenants.json
+
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
+        with:
+          path: dist
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

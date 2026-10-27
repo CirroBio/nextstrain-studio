@@ -1,0 +1,8 @@
+{
+  "input": "$.inputs[0].dataPath",
+  "outdir": "$.dataset.dataPath",
+  "dataset_name": "$.dataset.params.dataset_name",
+  "dataset_tag": "$.dataset.params.dataset_tag",
+  "sequences": "$.dataset.params.sequences",
+  "name": "$.dataset.params.name"
+}

@@ -1,0 +1,134 @@
+{
+  "form": {
+    "type": "object",
+    "name": "Nextstrain build from tree",
+    "properties": {
+      "name": {
+        "title": "Dataset name",
+        "type": "string",
+        "description": "Stem of the Auspice JSON written to auspice/<name>.json. Letters, digits, '.', '_' and '-'.",
+        "default": "tree",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+      },
+      "title": {
+        "title": "Title",
+        "type": "string",
+        "description": "Shown at the top of the tree in Auspice."
+      },
+      "tree": {
+        "title": "Tree",
+        "type": "string",
+        "description": "Newick tree. When blank, the one .nwk/.newick/.tree/.treefile in the input dataset is used.",
+        "pathType": "dataset",
+        "file": "**/*.{nwk,newick,tree,treefile}",
+        "useS3Path": true
+      },
+      "metadata": {
+        "title": "Metadata",
+        "type": "string",
+        "description": "TSV or CSV with one row per tip. When blank, the one TSV/CSV in the input dataset is used.",
+        "pathType": "dataset",
+        "file": "**/*.{tsv,csv}",
+        "useS3Path": true
+      },
+      "alignment": {
+        "title": "Alignment",
+        "type": "string",
+        "description": "Optional FASTA alignment of the tips, for mutations on branches. When blank, the one FASTA in the input dataset is used if there is one.",
+        "pathType": "dataset",
+        "file": "**/*.{fasta,fa,fna,fasta.gz,fa.gz,fna.gz,fasta.xz,fa.xz,fna.xz,fasta.zst,fa.zst,fna.zst}",
+        "useS3Path": true
+      },
+      "metadata_id_columns": {
+        "title": "Strain column",
+        "type": "string",
+        "description": "Metadata column holding the sequence names. Comma-separate several to try in order.",
+        "default": "strain"
+      },
+      "timetree": {
+        "title": "Time-resolved tree",
+        "type": "boolean",
+        "default": false,
+        "description": "Infer a timetree from the metadata's date column. Needs the alignment."
+      },
+      "clock_rate": {
+        "title": "Clock rate",
+        "type": "number",
+        "description": "Fixed substitution rate in substitutions per site per year. Estimated from the data when blank."
+      },
+      "clock_std_dev": {
+        "title": "Clock rate standard deviation",
+        "type": "number",
+        "description": "Uncertainty of a fixed clock rate."
+      },
+      "root": {
+        "title": "Root",
+        "type": "string",
+        "description": "best, least-squares, min_dev or oldest, or one or two strain names (comma-separated) to root on. augur's default (best) when blank."
+      },
+      "coalescent": {
+        "title": "Coalescent model",
+        "type": "string",
+        "description": "Coalescent prior for the timetree: opt, const, skyline, or a number (Tc). None when blank."
+      },
+      "clock_filter_iqd": {
+        "title": "Clock filter (IQD)",
+        "type": "number",
+        "description": "With a timetree, drop tips more than this many interquartile ranges off the clock. Off when blank."
+      },
+      "traits": {
+        "title": "Traits to reconstruct",
+        "type": "string",
+        "description": "Comma-separated metadata columns whose ancestral states are inferred, e.g. country,region."
+      },
+      "color_by": {
+        "title": "Color by",
+        "type": "string",
+        "description": "Comma-separated metadata columns offered as colorings in Auspice."
+      },
+      "geo_resolutions": {
+        "title": "Geographic resolutions",
+        "type": "string",
+        "description": "Comma-separated metadata columns to place on the map, e.g. region,country. Need coordinates from augur's defaults or a lat-longs file."
+      },
+      "auspice_config": {
+        "title": "Auspice config",
+        "type": "string",
+        "description": "Optional auspice_config.json with colorings, filters and display defaults.",
+        "pathType": "dataset",
+        "file": "**/*.json",
+        "useS3Path": true
+      },
+      "lat_longs": {
+        "title": "Lat-longs",
+        "type": "string",
+        "description": "Optional TSV of coordinates: resolution, name, latitude, longitude.",
+        "pathType": "dataset",
+        "file": "**/*.tsv",
+        "useS3Path": true
+      }
+    },
+    "required": []
+  },
+  "ui": {
+    "ui:order": [
+      "name",
+      "title",
+      "tree",
+      "metadata",
+      "alignment",
+      "metadata_id_columns",
+      "timetree",
+      "clock_rate",
+      "clock_std_dev",
+      "root",
+      "coalescent",
+      "clock_filter_iqd",
+      "traits",
+      "color_by",
+      "geo_resolutions",
+      "auspice_config",
+      "lat_longs"
+    ]
+  }
+}

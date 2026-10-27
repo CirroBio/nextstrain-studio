@@ -1,0 +1,168 @@
+/*
+ * Design tokens: plain CSS custom properties for type, space, color and charts.
+ *
+ * Every token is prefixed --cal- so it can't collide with other custom
+ * properties. Values are hex; for alpha use
+ * color-mix(in srgb, var(--cal-color-accent) 20%, transparent).
+ *
+ * Dark theme applies with prefers-color-scheme unless the app sets
+ * data-theme="light" on <html>; data-theme="dark" forces it.
+ */
+
+:root {
+  /* Type */
+  --cal-font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --cal-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --cal-text-xs: 0.75rem;
+  --cal-text-sm: 0.8125rem;
+  --cal-text-md: 0.875rem;   /* body: dense, data-heavy UIs */
+  --cal-text-lg: 1rem;
+  --cal-text-xl: 1.25rem;
+  --cal-text-2xl: 1.5rem;
+  --cal-weight-regular: 400;
+  --cal-weight-medium: 500;
+  --cal-weight-semibold: 600;
+  --cal-leading-tight: 1.25;
+  --cal-leading-normal: 1.5;
+
+  /* Space (4px grid) and shape */
+  --cal-space-1: 4px;
+  --cal-space-2: 8px;
+  --cal-space-3: 12px;
+  --cal-space-4: 16px;
+  --cal-space-6: 24px;
+  --cal-space-8: 32px;
+  --cal-radius-sm: 4px;
+  --cal-radius-md: 6px;
+  --cal-radius-lg: 10px;
+
+  /* Shell geometry, identical in every app */
+  --cal-shell-topbar-height: 48px;
+  --cal-shell-rail-width: 184px;
+  --cal-shell-rail-width-collapsed: 56px;
+  --cal-shell-inspector-width: 320px;
+
+  /* Surfaces and text (light) */
+  --cal-color-bg: #ffffff;
+  --cal-color-surface: #f7f8fa;
+  --cal-color-surface-raised: #ffffff;
+  --cal-color-border: #e2e5ea;
+  --cal-color-text: #15181d;
+  --cal-color-text-muted: #5b6370;
+  --cal-color-accent: #2f5bd3;
+  --cal-color-accent-contrast: #ffffff;
+  --cal-color-focus: #2f5bd3;
+
+  /* Status: same meaning in every app */
+  --cal-color-success: #1d7a46;
+  --cal-color-warning: #a35b00;
+  --cal-color-danger: #c42b2b;
+  --cal-color-info: #2f5bd3;
+  --cal-color-running: #6b46c1;
+
+
+
+  --cal-shadow-raised: 0 1px 2px rgb(0 0 0 / 0.06), 0 2px 8px rgb(0 0 0 / 0.06);
+
+  /*
+   * Data palettes, validated with the dataviz palette checker in both modes; src/charts/palette.ts
+   * holds the same values for WebGL. Categorical hues go in this order and are never cycled.
+   * Sequential: one blue ramp. Diverging: blue and red about a gray midpoint.
+   */
+  --cal-cat-1: #2a78d6;
+  --cal-cat-2: #eb6834;
+  --cal-cat-3: #1baf7a;
+  --cal-cat-4: #eda100;
+  --cal-cat-5: #e87ba4;
+  --cal-cat-6: #008300;
+  --cal-cat-7: #6250d6;
+  --cal-cat-8: #e34948;
+  --cal-cat-other: #b5b3ab;
+  --cal-seq-low: #cde2fb;
+  --cal-seq-mid: #3987e5;
+  --cal-seq-high: #0d366b;
+  --cal-div-neg: #1c5cab;
+  --cal-div-mid: #f0efec;
+  --cal-div-pos: #c23b3a;
+  --cal-grid: #e1e0d9;
+  --cal-axis: #c3c2b7;
+  --cal-ink-muted: #898781;
+
+  /* Figures exported for publication */
+  --cal-figure-font: "Arial", "Helvetica", sans-serif;
+  --cal-figure-font-size: 7pt;
+  --cal-figure-width-single: 89mm;
+  --cal-figure-width-double: 183mm;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cal-color-bg: #0f1115;
+    --cal-color-surface: #161920;
+    --cal-color-surface-raised: #1d2129;
+    --cal-color-border: #2b303a;
+    --cal-color-text: #e8eaee;
+    --cal-color-text-muted: #9aa3b1;
+    --cal-color-accent: #7c9cf5;
+    --cal-color-accent-contrast: #0f1115;
+    --cal-color-focus: #7c9cf5;
+    --cal-color-success: #4cc285;
+    --cal-color-warning: #e3a33b;
+    --cal-color-danger: #f07272;
+    --cal-color-info: #7c9cf5;
+    --cal-color-running: #a98bf0;
+    --cal-shadow-raised: 0 1px 2px rgb(0 0 0 / 0.4), 0 2px 8px rgb(0 0 0 / 0.3);
+    --cal-cat-1: #3987e5;
+    --cal-cat-2: #d95926;
+    --cal-cat-3: #199e70;
+    --cal-cat-4: #c98500;
+    --cal-cat-5: #d55181;
+    --cal-cat-6: #008300;
+    --cal-cat-7: #9085e9;
+    --cal-cat-8: #e66767;
+    --cal-cat-other: #5c5b56;
+    --cal-seq-low: #1f2a3a;
+    --cal-seq-mid: #2a78d6;
+    --cal-seq-high: #cde2fb;
+    --cal-div-neg: #5598e7;
+    --cal-div-mid: #383835;
+    --cal-div-pos: #e66767;
+    --cal-grid: #2c2c2a;
+    --cal-axis: #383835;
+  }
+}
+
+:root[data-theme="dark"] {
+  --cal-color-bg: #0f1115;
+  --cal-color-surface: #161920;
+  --cal-color-surface-raised: #1d2129;
+  --cal-color-border: #2b303a;
+  --cal-color-text: #e8eaee;
+  --cal-color-text-muted: #9aa3b1;
+  --cal-color-accent: #7c9cf5;
+  --cal-color-accent-contrast: #0f1115;
+  --cal-color-focus: #7c9cf5;
+  --cal-color-success: #4cc285;
+  --cal-color-warning: #e3a33b;
+  --cal-color-danger: #f07272;
+  --cal-color-info: #7c9cf5;
+  --cal-color-running: #a98bf0;
+  --cal-shadow-raised: 0 1px 2px rgb(0 0 0 / 0.4), 0 2px 8px rgb(0 0 0 / 0.3);
+  --cal-cat-1: #3987e5;
+  --cal-cat-2: #d95926;
+  --cal-cat-3: #199e70;
+  --cal-cat-4: #c98500;
+  --cal-cat-5: #d55181;
+  --cal-cat-6: #008300;
+  --cal-cat-7: #9085e9;
+  --cal-cat-8: #e66767;
+  --cal-cat-other: #5c5b56;
+  --cal-seq-low: #1f2a3a;
+  --cal-seq-mid: #2a78d6;
+  --cal-seq-high: #cde2fb;
+  --cal-div-neg: #5598e7;
+  --cal-div-mid: #383835;
+  --cal-div-pos: #e66767;
+  --cal-grid: #2c2c2a;
+  --cal-axis: #383835;
+}

@@ -1,0 +1,44 @@
+{
+  "form": {
+    "type": "object",
+    "name": "Nextclade",
+    "properties": {
+      "dataset_name": {
+        "title": "Nextclade dataset",
+        "type": "string",
+        "description": "Dataset name as listed by 'nextclade dataset list', e.g. nextstrain/sars-cov-2/wuhan-hu-1/orfs, nextstrain/mpox/all-clades, nextstrain/flu/h3n2/ha/EPI1857216."
+      },
+      "dataset_tag": {
+        "title": "Dataset version",
+        "type": "string",
+        "description": "Version tag of the dataset, e.g. 2024-10-17--16-48-48Z. Latest when blank."
+      },
+      "sequences": {
+        "title": "Sequences",
+        "type": "string",
+        "description": "FASTA of sequences. When blank, the one FASTA in the input dataset is used.",
+        "pathType": "dataset",
+        "file": "**/*.{fasta,fa,fna,fasta.gz,fa.gz,fna.gz,fasta.xz,fa.xz,fna.xz,fasta.zst,fa.zst,fna.zst}",
+        "useS3Path": true
+      },
+      "name": {
+        "title": "Dataset name",
+        "type": "string",
+        "description": "Stem of the Auspice JSON written to auspice/<name>.json. Letters, digits, '.', '_' and '-'.",
+        "default": "nextclade",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+      }
+    },
+    "required": [
+      "dataset_name"
+    ]
+  },
+  "ui": {
+    "ui:order": [
+      "dataset_name",
+      "dataset_tag",
+      "sequences",
+      "name"
+    ]
+  }
+}

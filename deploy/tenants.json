@@ -1,0 +1,8 @@
+{
+  "tenants": [
+    { "id": "app", "name": "Cirro", "url": "https://app.cirro.bio" },
+    { "id": "fredhutch", "name": "Fred Hutch", "url": "https://fredhutch.cirro.bio" },
+    { "id": "dev", "name": "Cirro dev", "url": "https://dev.cirro.bio" },
+    { "id": "demo", "name": "Cirro demo", "url": "https://demo.cirro.bio" }
+  ]
+}

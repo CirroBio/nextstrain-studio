@@ -1,0 +1,11 @@
+{
+  "name": "nextstrain-studio-viewer",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "build": "node build.cjs"
+  },
+  "dependencies": {
+    "auspice": "3.1.0"
+  }
+}

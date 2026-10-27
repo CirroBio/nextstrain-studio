@@ -1,0 +1,388 @@
+{
+  "$schema": "./catalog.schema.json",
+  "datasets": [
+    {
+      "id": "ncov-global-6m",
+      "title": "SARS-CoV-2, global, past 6 months",
+      "pathogen": "SARS-CoV-2",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "ncov/open/global/6m"
+      },
+      "description": "Open GenBank data, subsampled globally over the past six months.",
+      "tags": [
+        "respiratory",
+        "coronavirus"
+      ]
+    },
+    {
+      "id": "seasonal-flu-h3n2-ha-2y",
+      "title": "Seasonal influenza A/H3N2, HA, 2 years",
+      "pathogen": "Influenza A/H3N2",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "seasonal-flu/h3n2/ha/2y"
+      },
+      "description": "Hemagglutinin segment of circulating H3N2 viruses over the past two years.",
+      "tags": [
+        "respiratory",
+        "influenza"
+      ]
+    },
+    {
+      "id": "seasonal-flu-h1n1pdm-ha-2y",
+      "title": "Seasonal influenza A/H1N1pdm, HA, 2 years",
+      "pathogen": "Influenza A/H1N1pdm",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "seasonal-flu/h1n1pdm/ha/2y"
+      },
+      "description": "Hemagglutinin segment of circulating H1N1pdm viruses over the past two years.",
+      "tags": [
+        "respiratory",
+        "influenza"
+      ]
+    },
+    {
+      "id": "avian-flu-h5n1-cattle",
+      "title": "H5N1 in US cattle, full genome",
+      "pathogen": "Influenza A/H5N1",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "avian-flu/h5n1-cattle-outbreak/genome"
+      },
+      "description": "Avian influenza H5N1 clade 2.3.4.4b genomes from the outbreak in US dairy cattle and related hosts.",
+      "tags": [
+        "influenza",
+        "zoonotic",
+        "one-health"
+      ]
+    },
+    {
+      "id": "mpox-all-clades",
+      "title": "Mpox, all clades",
+      "pathogen": "Mpox virus",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "mpox/all-clades"
+      },
+      "description": "Mpox virus genomes across clades I and II.",
+      "tags": [
+        "orthopoxvirus"
+      ]
+    },
+    {
+      "id": "measles-genome",
+      "title": "Measles, full genome",
+      "pathogen": "Measles virus",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "measles/genome/global"
+      },
+      "description": "Global measles virus genomes.",
+      "tags": [
+        "respiratory",
+        "vaccine-preventable"
+      ]
+    },
+    {
+      "id": "rsv-a-genome",
+      "title": "RSV-A, full genome, 6 years",
+      "pathogen": "Respiratory syncytial virus A",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "rsv/a/genome/6y"
+      },
+      "description": "RSV-A genomes from the past six years.",
+      "tags": [
+        "respiratory"
+      ]
+    },
+    {
+      "id": "rsv-b-genome",
+      "title": "RSV-B, full genome, 6 years",
+      "pathogen": "Respiratory syncytial virus B",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "rsv/b/genome/6y"
+      },
+      "description": "RSV-B genomes from the past six years.",
+      "tags": [
+        "respiratory"
+      ]
+    },
+    {
+      "id": "hmpv-all-genome",
+      "title": "Human metapneumovirus, full genome",
+      "pathogen": "Human metapneumovirus",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "hmpv/all/genome"
+      },
+      "description": "hMPV genomes across subtypes A and B.",
+      "tags": [
+        "respiratory"
+      ]
+    },
+    {
+      "id": "dengue-denv1",
+      "title": "Dengue virus serotype 1, full genome",
+      "pathogen": "Dengue virus",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "dengue/denv1/genome"
+      },
+      "description": "DENV1 genomes.",
+      "tags": [
+        "arbovirus",
+        "flavivirus"
+      ]
+    },
+    {
+      "id": "dengue-denv2",
+      "title": "Dengue virus serotype 2, full genome",
+      "pathogen": "Dengue virus",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "dengue/denv2/genome"
+      },
+      "description": "DENV2 genomes.",
+      "tags": [
+        "arbovirus",
+        "flavivirus"
+      ]
+    },
+    {
+      "id": "zika",
+      "title": "Zika virus",
+      "pathogen": "Zika virus",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "zika"
+      },
+      "description": "Zika virus genomes, centred on the 2015–2016 epidemic in the Americas.",
+      "tags": [
+        "arbovirus",
+        "flavivirus"
+      ]
+    },
+    {
+      "id": "chikv-global",
+      "title": "Chikungunya virus, global",
+      "pathogen": "Chikungunya virus",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "chikv/global"
+      },
+      "description": "Chikungunya virus genomes worldwide.",
+      "tags": [
+        "arbovirus",
+        "alphavirus"
+      ]
+    },
+    {
+      "id": "yellow-fever-genome",
+      "title": "Yellow fever virus, full genome",
+      "pathogen": "Yellow fever virus",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "yellow-fever/genome"
+      },
+      "description": "Yellow fever virus genomes.",
+      "tags": [
+        "arbovirus",
+        "flavivirus"
+      ]
+    },
+    {
+      "id": "wnv-all-lineages",
+      "title": "West Nile virus, all lineages",
+      "pathogen": "West Nile virus",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "WNV/all-lineages"
+      },
+      "description": "West Nile virus genomes across lineages.",
+      "tags": [
+        "arbovirus",
+        "flavivirus"
+      ]
+    },
+    {
+      "id": "oropouche-s",
+      "title": "Oropouche virus, S segment",
+      "pathogen": "Oropouche virus",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "oropouche/S"
+      },
+      "description": "Oropouche virus small segment.",
+      "tags": [
+        "arbovirus"
+      ]
+    },
+    {
+      "id": "ebola-all-outbreaks",
+      "title": "Ebola virus, all outbreaks",
+      "pathogen": "Ebola virus",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "ebola/all-outbreaks"
+      },
+      "description": "Ebola virus genomes across outbreaks.",
+      "tags": [
+        "filovirus",
+        "zoonotic"
+      ]
+    },
+    {
+      "id": "lassa-s",
+      "title": "Lassa virus, S segment",
+      "pathogen": "Lassa virus",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "lassa/s"
+      },
+      "description": "Lassa virus small segment.",
+      "tags": [
+        "arenavirus",
+        "zoonotic"
+      ]
+    },
+    {
+      "id": "nipah-all",
+      "title": "Nipah virus",
+      "pathogen": "Nipah virus",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "nipah/all"
+      },
+      "description": "Nipah virus genomes.",
+      "tags": [
+        "henipavirus",
+        "zoonotic"
+      ]
+    },
+    {
+      "id": "enterovirus-d68-genome",
+      "title": "Enterovirus D68, full genome",
+      "pathogen": "Enterovirus D68",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "enterovirus/d68/genome"
+      },
+      "description": "EV-D68 genomes.",
+      "tags": [
+        "enterovirus",
+        "respiratory"
+      ]
+    },
+    {
+      "id": "mumps-global",
+      "title": "Mumps, global",
+      "pathogen": "Mumps virus",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "mumps/global"
+      },
+      "description": "Global mumps virus genomes.",
+      "tags": [
+        "vaccine-preventable"
+      ]
+    },
+    {
+      "id": "rubella-genome",
+      "title": "Rubella, full genome",
+      "pathogen": "Rubella virus",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "rubella/genome"
+      },
+      "description": "Rubella virus genomes.",
+      "tags": [
+        "vaccine-preventable"
+      ]
+    },
+    {
+      "id": "norovirus-all-genome",
+      "title": "Norovirus, full genome",
+      "pathogen": "Norovirus",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "norovirus/all/genome"
+      },
+      "description": "Norovirus genomes across genogroups.",
+      "tags": [
+        "enteric"
+      ]
+    },
+    {
+      "id": "rabies",
+      "title": "Rabies virus",
+      "pathogen": "Rabies virus",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "rabies"
+      },
+      "description": "Rabies virus genomes.",
+      "tags": [
+        "zoonotic"
+      ]
+    },
+    {
+      "id": "tb-global",
+      "title": "Mycobacterium tuberculosis, global",
+      "pathogen": "Mycobacterium tuberculosis",
+      "maintainer": "Nextstrain team",
+      "source": {
+        "nextstrain": "tb/global"
+      },
+      "description": "Global M. tuberculosis genomes.",
+      "tags": [
+        "bacteria"
+      ]
+    },
+    {
+      "id": "blab-sars-like-cov",
+      "title": "SARS-like coronaviruses",
+      "pathogen": "Sarbecoviruses",
+      "maintainer": "Bedford Lab",
+      "source": {
+        "nextstrain": "community/blab/sars-like-cov"
+      },
+      "description": "Sarbecoviruses related to SARS-CoV-1 and SARS-CoV-2.",
+      "tags": [
+        "coronavirus",
+        "zoonotic"
+      ]
+    },
+    {
+      "id": "inrb-ebola-nord-kivu",
+      "title": "Ebola virus, Nord Kivu outbreak",
+      "pathogen": "Ebola virus",
+      "maintainer": "INRB (DRC)",
+      "source": {
+        "nextstrain": "community/inrb-drc/ebola-nord-kivu"
+      },
+      "description": "Genomes from the 2018–2020 Ebola outbreak in Nord Kivu, Democratic Republic of the Congo.",
+      "tags": [
+        "filovirus",
+        "outbreak"
+      ]
+    },
+    {
+      "id": "blab-ebola-narrative-ms",
+      "title": "Ebola virus, West Africa 2013–2016",
+      "pathogen": "Ebola virus",
+      "maintainer": "Bedford Lab",
+      "source": {
+        "nextstrain": "community/blab/ebola-narrative-ms/full-build"
+      },
+      "description": "The full build behind the West African Ebola epidemic narrative.",
+      "tags": [
+        "filovirus",
+        "outbreak"
+      ]
+    }
+  ]
+}

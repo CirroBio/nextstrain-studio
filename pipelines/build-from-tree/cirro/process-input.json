@@ -1,0 +1,21 @@
+{
+  "input": "$.inputs[0].dataPath",
+  "outdir": "$.dataset.dataPath",
+  "name": "$.dataset.params.name",
+  "title": "$.dataset.params.title",
+  "tree": "$.dataset.params.tree",
+  "metadata": "$.dataset.params.metadata",
+  "alignment": "$.dataset.params.alignment",
+  "metadata_id_columns": "$.dataset.params.metadata_id_columns",
+  "timetree": "$.dataset.params.timetree",
+  "clock_rate": "$.dataset.params.clock_rate",
+  "clock_std_dev": "$.dataset.params.clock_std_dev",
+  "root": "$.dataset.params.root",
+  "coalescent": "$.dataset.params.coalescent",
+  "clock_filter_iqd": "$.dataset.params.clock_filter_iqd",
+  "traits": "$.dataset.params.traits",
+  "color_by": "$.dataset.params.color_by",
+  "geo_resolutions": "$.dataset.params.geo_resolutions",
+  "auspice_config": "$.dataset.params.auspice_config",
+  "lat_longs": "$.dataset.params.lat_longs"
+}
