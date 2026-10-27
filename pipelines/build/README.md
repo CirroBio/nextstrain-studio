@@ -18,16 +18,10 @@ Every parameter is listed in [`docs/pipeline-params.md`](../../docs/pipeline-par
 | `TIP_FREQUENCIES` | `frequencies --method kde` | `--timetree` is on |
 | `EXPORT` | `export v2 --include-root-sequence` | always |
 
-All of them run in `ghcr.io/cirrobio/nextstrain-studio-base`, which is
-`nextstrain/base` (pinned to a build tag) plus `procps`; see
-[`../container/Dockerfile`](../container/Dockerfile). Nextflow needs `ps` in the container
-whenever tracing is on, and Cirro always traces. The same image serves all four
-pipelines and has to be pushed to that name before the pipelines can run in Cirro:
-
-```bash
-docker build -t ghcr.io/cirrobio/nextstrain-studio-base:build-20261026T235949Z pipelines/container
-docker push ghcr.io/cirrobio/nextstrain-studio-base:build-20261026T235949Z
-```
+All of them run in the Biocontainers augur image,
+`quay.io/biocontainers/augur:34.3.0--pyhdfd78af_0`, which includes MAFFT, IQ-TREE and
+SeqKit. It also has `ps`, which Nextflow needs in the container because Cirro always
+traces.
 
 ## Inputs
 

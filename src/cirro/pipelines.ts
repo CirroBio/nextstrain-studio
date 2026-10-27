@@ -23,9 +23,7 @@ import ingestCompute from "../../pipelines/ingest-ncbi/cirro/process-compute.con
 // The code is read from this repository at the commit the app was built from.
 export const PIPELINE_REPOSITORY = "CirroBio/nextstrain-studio";
 export const PIPELINE_VERSION = __PIPELINE_VERSION__;
-// GITHUB_PRIVATE while the repository is private: only tenants with Cirro's GitHub app authorized
-// for CirroBio can read it. It becomes GITHUB_PUBLIC when the repository is published.
-export const PIPELINE_REPOSITORY_TYPE = RepositoryType.GithubPrivate;
+export const PIPELINE_REPOSITORY_TYPE = RepositoryType.GithubPublic;
 
 export type PipelineKey = "ingest" | "build" | "buildFromTree" | "nextclade";
 

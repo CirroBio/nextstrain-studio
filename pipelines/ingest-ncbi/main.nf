@@ -2,14 +2,6 @@
 
 nextflow.enable.dsl = 2
 
-// NCBI Datasets field mnemonics, in output order. See
-// https://www.ncbi.nlm.nih.gov/datasets/docs/v2/reference-docs/command-line/dataformat/tsv/dataformat_tsv_virus-genome/#fields
-NCBI_FIELDS = [
-    'accession', 'sourcedb', 'sra-accs', 'isolate-lineage', 'geo-region', 'geo-location',
-    'isolate-collection-date', 'release-date', 'update-date', 'length', 'completeness',
-    'host-name', 'submitter-names', 'submitter-affiliation',
-]
-
 // The accession becomes the strain name: unlike the isolate name it is always present
 // and unique, so the output can go straight into a build keyed on `strain`.
 FIELD_MAP = [
@@ -60,9 +52,6 @@ def shellQuote(value) {
 }
 
 process FETCH {
-    input:
-    val taxon_id
-
     output:
     path 'ncbi_sequences.fasta', emit: sequences
     path 'ncbi_report.tsv', emit: report
@@ -70,30 +59,13 @@ process FETCH {
     script:
     def filters = [
         params.complete_only ? '--complete-only' : '',
-        params.released_since ? "--released-after ${shellQuote(params.released_since)}" : '',
+        params.released_since ? "--released-since ${shellQuote(params.released_since)}" : '',
         params.host ? "--host ${shellQuote(params.host)}" : '',
     ].findAll { it }.join(' ')
-    def fields = NCBI_FIELDS.join(',')
     """
-    datasets download virus genome taxon ${shellQuote(taxon_id)} ${filters} \\
-        --no-progressbar \\
-        --filename ncbi_dataset.zip
-
-    unzip -jp ncbi_dataset.zip ncbi_dataset/data/genomic.fna > ncbi_sequences.fasta
-    if [ ! -s ncbi_sequences.fasta ]; then
-        echo "NCBI Virus has no genomes for taxon ${shellQuote(taxon_id)} with these filters." >&2
-        exit 1
-    fi
-
-    dataformat tsv virus-genome \\
-        --package ncbi_dataset.zip \\
-        --fields ${fields} \\
-        --elide-header \\
-        | csvtk fix-quotes -Ht \\
-        | csvtk add-header -t -n ${fields} \\
-        | csvtk rename -t -f accession -n accession_version \\
-        | csvtk mutate -t -f accession_version -n accession -p '^(.+?)\\.' --at 1 \\
-        > ncbi_report.tsv
+    fetch_ncbi_virus.py --taxon ${shellQuote(params.taxon_id)} ${filters} \\
+        --output-sequences ncbi_sequences.fasta \\
+        --output-report ncbi_report.tsv
     """
 }
 
@@ -138,9 +110,7 @@ process CURATE {
             --output-id-field strain \\
             --output-seq-field sequence
 
-    csvtk mutate2 -t -n url -e '"https://www.ncbi.nlm.nih.gov/nuccore/" + \$accession_version' curated.tsv \\
-        | csvtk cut -t -f ${METADATA_COLUMNS.join(',')} \\
-        > metadata.tsv
+    select_columns.py curated.tsv ${METADATA_COLUMNS.join(' ')} > metadata.tsv
     """
 }
 
@@ -157,6 +127,6 @@ workflow {
         error "--released_since '${params.released_since}' must be a date, YYYY-MM-DD."
     }
 
-    FETCH(params.taxon_id.toString())
+    FETCH()
     CURATE(FETCH.out.sequences, FETCH.out.report)
 }

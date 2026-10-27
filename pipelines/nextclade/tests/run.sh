@@ -6,7 +6,8 @@ set -euo pipefail
 
 PROFILE="${1:-docker}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
-IMAGE=$(sed -n "s/^ *container *= *'\(.*\)'/\1/p" "$HERE/../nextflow.config")
+# The process-wide container, which is the augur image.
+IMAGE=$(sed -n "s/^ *container *= *'\(.*\)'/\1/p" "$HERE/../nextflow.config" | head -1)
 EXAMPLES=https://raw.githubusercontent.com/nextstrain/nextclade_data/fe18bae64397665956048f392500231f37f662fe/data/nextstrain/sars-cov-2/wuhan-hu-1/orfs/sequences.fasta
 WORK="$(mktemp -d)"
 cd "$WORK"

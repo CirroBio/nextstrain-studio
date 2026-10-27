@@ -7,8 +7,10 @@ Every parameter is listed in [`docs/pipeline-params.md`](../../docs/pipeline-par
 
 ## Steps
 
-One process, `NEXTCLADE`: `nextclade dataset get --name <dataset_name> [--tag
-<dataset_tag>]`, then `nextclade run` with that dataset. Datasets are listed by
+`NEXTCLADE` runs `nextclade dataset get --name <dataset_name> [--tag <dataset_tag>]`,
+then `nextclade run` with that dataset, in `quay.io/biocontainers/nextclade:3.25.1--h9ee0642_0`.
+`DEDUPE_FILTERS` then tidies the placed tree in the Biocontainers augur image (see
+Outputs). Datasets are listed by
 `nextclade dataset list` and at https://clades.nextstrain.org, e.g.
 `nextstrain/sars-cov-2/wuhan-hu-1/orfs`, `nextstrain/mpox/all-clades`,
 `nextstrain/flu/h3n2/ha/EPI1857216`.
@@ -31,7 +33,7 @@ One process, `NEXTCLADE`: `nextclade dataset get --name <dataset_name> [--tag
 `auspice/<name>.json` is written only when the dataset ships a reference tree
 (`tree.json`); most Nextstrain datasets do. Nextclade lists some `meta.filters` twice
 (e.g. `clade_membership` for SARS-CoV-2), which fails the Auspice v2 schema, so
-duplicates are dropped with `jq` before the tree is published.
+`bin/dedupe_filters.py` drops the duplicates before the tree is published.
 
 ## Running it
 

@@ -1,7 +1,7 @@
 # Nextstrain NCBI Virus ingest
 
-Fetches virus genomes and metadata for an NCBI taxon from NCBI Virus with
-[NCBI Datasets](https://www.ncbi.nlm.nih.gov/datasets/), and curates them with
+Fetches virus genomes and metadata for an NCBI taxon from NCBI Virus with the
+[NCBI Datasets v2 API](https://www.ncbi.nlm.nih.gov/datasets/docs/v2/api/), and curates them with
 `augur curate` along the lines of the
 [Nextstrain pathogen repo guide's ingest](https://github.com/nextstrain/pathogen-repo-guide/tree/main/ingest).
 The output is a valid input for the build and Nextclade pipelines. Every parameter is
@@ -11,8 +11,10 @@ listed in [`docs/pipeline-params.md`](../../docs/pipeline-params.md).
 
 | Process | What it does |
 | --- | --- |
-| `FETCH` | `datasets download virus genome taxon` with the chosen filters, then `dataformat tsv virus-genome` for the metadata |
-| `CURATE` | `augur curate`: rename fields, normalize strings, format dates, parse the GenBank location into country/division/location, titlecase places, abbreviate authors, apply Nextstrain's geolocation rules; then add an NCBI URL and keep the columns below |
+| `FETCH` | `bin/fetch_ncbi_virus.py`: downloads `/virus/taxon/{taxon}/genome/download` with the chosen filters, and turns its data report into a TSV with the columns `dataformat tsv virus-genome` would give, plus an NCBI URL |
+| `CURATE` | `augur curate`: rename fields, normalize strings, format dates, parse the GenBank location into country/division/location, titlecase places, abbreviate authors, apply Nextstrain's geolocation rules; then `bin/select_columns.py` keeps the columns below |
+
+Both run in the Biocontainers augur image, `quay.io/biocontainers/augur:34.3.0--pyhdfd78af_0`.
 
 A run whose filters match no genomes fails with that message, rather than
 publishing empty files.

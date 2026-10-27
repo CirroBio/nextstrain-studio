@@ -42,8 +42,6 @@ The pipelines run locally with Docker; see each `pipelines/<name>/README.md`.
 
 ## Deploying
 
-The pipelines run in `ghcr.io/cirrobio/nextstrain-studio-base` (nextstrain/base plus `ps`, which Nextflow needs on Cirro), built by `.github/workflows/container.yml`. Cirro pulls it without credentials, so the package must be public. While this repository is private, Cirro can read the pipeline code only in tenants where Cirro's GitHub app is authorized for CirroBio; `PIPELINE_REPOSITORY_TYPE` in `src/cirro/pipelines.ts` changes to `GITHUB_PUBLIC` when it is published.
-
 `.github/workflows/pages.yml` tests, builds and publishes to GitHub Pages from `main`, with `deploy/tenants.json` as the tenant list. Each tenant whose users should sign in registers the production callback URL (the Pages address plus `/nextstrain-studio/`) with discovery enabled; see the Cirro app kit's deployment guide.
 
 ## License

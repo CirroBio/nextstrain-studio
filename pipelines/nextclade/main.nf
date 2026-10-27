@@ -35,7 +35,6 @@ def shellQuote(value) {
 process NEXTCLADE {
     label 'process_medium'
     publishDir "${params.outdir}/results", mode: 'copy', pattern: '{nextclade.*,translations}'
-    publishDir "${params.outdir}/auspice", mode: 'copy', pattern: "${params.name}.json"
 
     input:
     path sequences
@@ -44,7 +43,7 @@ process NEXTCLADE {
     path 'nextclade.tsv'
     path 'nextclade.aligned.fasta'
     path 'translations'
-    path "${params.name}.json", optional: true
+    path 'placed_tree.json', optional: true, emit: tree
 
     script:
     def tag = params.dataset_tag ? "--tag ${shellQuote(params.dataset_tag)}" : ''
@@ -66,13 +65,21 @@ process NEXTCLADE {
         --output-translations 'translations/{cds}.translation.fasta' \\
         \$output_tree \\
         ${shellQuote(sequences)}
+    """
+}
 
-    # Nextclade repeats some meta.filters entries (e.g. clade_membership for SARS-CoV-2),
-    # which fails the Auspice v2 schema's uniqueness rule. Keep the first of each.
-    if [ -f placed_tree.json ]; then
-        jq '.meta.filters |= reduce .[] as \$f ([]; if index([\$f]) then . else . + [\$f] end)' \\
-            placed_tree.json > ${params.name}.json
-    fi
+process DEDUPE_FILTERS {
+    publishDir "${params.outdir}/auspice", mode: 'copy'
+
+    input:
+    path tree, stageAs: 'placed/*'
+
+    output:
+    path "${params.name}.json"
+
+    script:
+    """
+    dedupe_filters.py ${tree} ${params.name}.json
     """
 }
 
@@ -107,4 +114,5 @@ workflow {
     }
 
     NEXTCLADE(sequences)
+    DEDUPE_FILTERS(NEXTCLADE.out.tree)
 }
