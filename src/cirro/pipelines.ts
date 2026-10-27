@@ -17,8 +17,10 @@ import ingestOutput from "../../pipelines/ingest-ncbi/cirro/process-output.json"
 import ingestCompute from "../../pipelines/ingest-ncbi/cirro/process-compute.config?raw";
 
 // This app's pipelines as Cirro process records. The app registers them itself, in each project
-// where a user with permission sets it up (src/cirro/setup.ts), with the configuration bundled in
-// this build, so the form a run gets always matches the app that launches it.
+// where a user with permission sets it up (src/cirro/setup.ts), with code and configuration read
+// from this repository at the commit the app was built from, so the form a run gets always matches
+// the app that launches it. The bundled copies of the configuration are for pipelines registered
+// before that, which keep their configuration in Cirro.
 
 // The code is read from this repository at the commit the app was built from.
 export const PIPELINE_REPOSITORY = "CirroBio/nextstrain-studio";
@@ -34,7 +36,8 @@ export type PipelineDefinition = {
   name: string;
   description: string;
   dataType: string;
-  entryPoint: string;
+  // Under pipelines/: main.nf, and the Cirro configuration in cirro/.
+  folder: string;
   parents: string[];
   files: { type: ProcessResource; content: string }[];
 };
@@ -58,7 +61,7 @@ export const PIPELINE_DEFINITIONS: PipelineDefinition[] = [
     name: "Nextstrain NCBI Virus ingest",
     description: "Downloads a virus's genomes and metadata from NCBI Virus and curates them the way Nextstrain's pathogen workflows do, ready to build from.",
     dataType: "Sequences and metadata",
-    entryPoint: "pipelines/ingest-ncbi/main.nf",
+    folder: "ingest-ncbi",
     parents: [FILES],
     files: config(ingestForm, ingestInput, ingestOutput, ingestCompute),
   },
@@ -68,7 +71,7 @@ export const PIPELINE_DEFINITIONS: PipelineDefinition[] = [
     name: "Nextstrain build",
     description: "Filters, aligns and builds a time-resolved phylogeny with augur from sequences and metadata, and exports it for Auspice.",
     dataType: "Nextstrain dataset",
-    entryPoint: "pipelines/build/main.nf",
+    folder: "build",
     parents: [FILES, INGEST_ID],
     files: config(buildForm, buildInput, buildOutput, buildCompute),
   },
@@ -78,7 +81,7 @@ export const PIPELINE_DEFINITIONS: PipelineDefinition[] = [
     name: "Nextstrain build from tree",
     description: "Turns an existing Newick tree and its metadata into a Nextstrain dataset: traits, a map and the Auspice view.",
     dataType: "Nextstrain dataset",
-    entryPoint: "pipelines/build-from-tree/main.nf",
+    folder: "build-from-tree",
     parents: [FILES],
     files: config(treeForm, treeInput, treeOutput, treeCompute),
   },
@@ -88,7 +91,7 @@ export const PIPELINE_DEFINITIONS: PipelineDefinition[] = [
     name: "Nextclade",
     description: "Assigns clades and checks sequence quality with Nextclade, and places the sequences on the dataset's reference tree for Auspice.",
     dataType: "Nextclade results",
-    entryPoint: "pipelines/nextclade/main.nf",
+    folder: "nextclade",
     parents: [FILES, INGEST_ID],
     files: config(nextcladeForm, nextcladeInput, nextcladeOutput, nextcladeCompute),
   },

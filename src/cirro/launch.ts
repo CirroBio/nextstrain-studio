@@ -1,5 +1,6 @@
 import type { FileSystemObject } from "@cirrobio/sdk";
-import { retryRateLimited, type Cirro } from "./cirro";
+import type { Cirro } from "./cirro";
+import { readHead } from "./projectBuilds";
 import { addNote } from "./provenance";
 import { APP_TAG } from "../app/appInfo";
 
@@ -36,15 +37,11 @@ export async function launch(cirro: Cirro, req: LaunchRequest): Promise<{ datase
   return { datasetId: run.id, problem };
 }
 
-// The header of a delimited table: one ranged read, so a large metadata file isn't downloaded to
-// offer its column names.
+// The header of a delimited table, to offer its column names.
 const HEADER_BYTES = 64 * 1024;
 
 export async function tableColumns(cirro: Cirro, file: FileSystemObject): Promise<string[]> {
-  const url = await retryRateLimited(() => cirro.files.getSignedUrlFromProjectFile(file));
-  const res = await fetch(url, { headers: { Range: `bytes=0-${HEADER_BYTES - 1}` } });
-  if (!res.ok) throw new Error(`Couldn't read the header of ${file.name ?? file.relativePath} (HTTP ${res.status}).`);
-  const first = (await res.text()).split(/\r?\n/, 1)[0];
+  const first = (await readHead(cirro, file, HEADER_BYTES)).split(/\r?\n/, 1)[0];
   const sep = /\.csv$/i.test(file.relativePath) ? "," : "\t";
   return first.split(sep).map((c) => c.trim().replace(/^"|"$/g, "")).filter(Boolean);
 }

@@ -9,6 +9,8 @@ import { pipelineDefinition, type PipelineKey } from "../cirro/pipelines";
 import { pipelineStates } from "../cirro/setup";
 import { launch, tableColumns } from "../cirro/launch";
 import { portal } from "../cirro/portal";
+import { addNote, uploadFiles } from "../cirro/provenance";
+import { DEMO_INPUTS, demoFiles, type Demo } from "./demos";
 import type { Route } from "../app/route";
 
 // Launches one of this repo's pipelines (pipelines/, parameters in docs/pipeline-params.md).
@@ -67,6 +69,13 @@ export function NewBuildPage({ projectId, go }: { projectId: string; go: (r: Rou
   const ready = setup.status === "ready" && setup.value.states.find((s) => s.definition.key === kind)?.status === "ready";
   const process = ready ? { id: definition.id, name: definition.name } : null;
   const [inputId, setInputId] = useState("");
+  const [demoParams, setDemoParams] = useState<Record<string, unknown>>({});
+  // A demo dataset just added is selected once the reloaded list has it.
+  const [pendingInput, setPendingInput] = useState("");
+  if (pendingInput && setup.status === "ready" && setup.value.datasets.some((d) => d.id === pendingInput)) {
+    setInputId(pendingInput);
+    setPendingInput("");
+  }
   const input = setup.status === "ready" ? setup.value.datasets.find((d) => d.id === inputId) ?? null : null;
 
   return (
@@ -107,10 +116,21 @@ export function NewBuildPage({ projectId, go }: { projectId: string; go: (r: Rou
                 <option value="">Choose a dataset</option>
                 {setup.value.datasets.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
               </select>
+              {DEMO_INPUTS[kind] && (
+                <DemoInput
+                  demo={DEMO_INPUTS[kind]!}
+                  projectId={projectId}
+                  onAdded={(id) => {
+                    setDemoParams(DEMO_INPUTS[kind]!.params ?? {});
+                    setPendingInput(id);
+                    setup.reload();
+                  }}
+                />
+              )}
             </section>
           )}
           {(spec.needs.length === 0 || input) && (
-            <Settings key={`${kind}:${inputId}`} kind={kind} needs={spec.needs} input={input} projectId={projectId} processId={process.id} processName={process.name} go={go} />
+            <Settings key={`${kind}:${inputId}`} kind={kind} needs={spec.needs} input={input} defaults={demoParams} projectId={projectId} processId={process.id} processName={process.name} go={go} />
           )}
           <p className="muted">
             Every option is also on <a href={portal.launch(cirro.tenant.url, projectId, process.id)} target="_blank" rel="noreferrer">Cirro's own launch form</a> for this pipeline.
@@ -121,16 +141,17 @@ export function NewBuildPage({ projectId, go }: { projectId: string; go: (r: Rou
   );
 }
 
-type SettingsProps = { kind: Kind; needs: Role[]; input: Dataset | null; projectId: string; processId: string; processName: string; go: (r: Route) => void };
+type SettingsProps = { kind: Kind; needs: Role[]; input: Dataset | null; defaults: Record<string, unknown>; projectId: string; processId: string; processName: string; go: (r: Route) => void };
 
-function Settings({ kind, needs, input, projectId, processId, processName, go }: SettingsProps) {
+function Settings({ kind, needs, input, defaults, projectId, processId, processName, go }: SettingsProps) {
   const cirro = useSignedIn();
   const files = useAsync(async () => (input ? datasetFiles(cirro, projectId, input.id) : []), [cirro, projectId, input]);
+  const listed = files.status === "ready" ? files.value : null;
   const byRole = useMemo(() => {
-    const all = files.status === "ready" ? files.value : [];
+    const all = listed ?? [];
     const roles = [...needs, ...(kind === "build" ? (["reference"] as Role[]) : []), ...(kind === "buildFromTree" ? (["alignment"] as Role[]) : [])];
     return Object.fromEntries(roles.map((r) => [r, all.filter((f) => PATTERNS[r].test(filePath(f)))])) as Partial<Record<Role, FileSystemObject[]>>;
-  }, [files, needs, kind]);
+  }, [listed, needs, kind]);
   const [chosen, setChosen] = useState<Partial<Record<Role, string>>>({});
   const pick = (role: Role) => byRole[role]?.find((f) => f.url === chosen[role]) ?? (byRole[role]?.length === 1 ? byRole[role]![0] : undefined);
   const metadata = pick("metadata");
@@ -139,7 +160,7 @@ function Settings({ kind, needs, input, projectId, processId, processName, go }:
   const nextclade = useAsync((signal) => (kind === "nextclade" ? nextcladeDatasets(signal) : Promise.resolve([])), [kind]);
 
   const [name, setName] = useState(input ? input.name.replace(/[^A-Za-z0-9_.-]+/g, "-").replace(/^-+|-+$/g, "").toLowerCase() || "build" : "ncbi");
-  const [values, setValues] = useState<Record<string, unknown>>({ timetree: kind === "build" });
+  const [values, setValues] = useState<Record<string, unknown>>({ timetree: kind === "build", ...defaults });
   const set = (key: string, value: unknown) => setValues((v) => ({ ...v, [key]: value }));
   const [selected, setSelected] = useState<Record<string, string[]>>({});
   const toggle = (key: string, col: string) => setSelected((s) => ({ ...s, [key]: s[key]?.includes(col) ? s[key].filter((c) => c !== col) : [...(s[key] ?? []), col] }));
@@ -336,5 +357,41 @@ function ColumnPicker({ label, hint, cols, picked, onToggle, suggested = [] }: {
         ))}
       </div>
     </fieldset>
+  );
+}
+
+// Files datasets turn COMPLETED a few seconds after their upload; only then can a run read them.
+const READY_POLL_MS = 3000;
+const READY_POLLS = 40;
+
+function DemoInput({ demo, projectId, onAdded }: { demo: Demo; projectId: string; onAdded: (datasetId: string) => void }) {
+  const cirro = useSignedIn();
+  const [state, setState] = useState<{ status: "idle" | "working"; note?: string } | { status: "error"; error: string }>({ status: "idle" });
+  const add = async () => {
+    setState({ status: "working", note: "Uploading" });
+    try {
+      const files = await demoFiles(demo);
+      const datasetId = await uploadFiles(cirro, { projectId, name: `Demo: ${demo.title}`, description: demo.description, files: files.map((file) => ({ path: file.name, file })) }, () => undefined);
+      await addNote(cirro, projectId, datasetId, { what: `Demo data from Nextstrain Studio: ${demo.title}. ${demo.description}`, inputs: [] });
+      setState({ status: "working", note: "Waiting for Cirro to register the files" });
+      for (let i = 0; i < READY_POLLS; i++) {
+        const dataset = await cirro.data.datasets.getDataset({ projectId, datasetId });
+        if (dataset.status === "COMPLETED") return onAdded(datasetId);
+        if (dataset.status === "FAILED") throw new Error("Cirro couldn't register the demo files.");
+        await new Promise((r) => setTimeout(r, READY_POLL_MS));
+      }
+      throw new Error("Cirro is still registering the demo files. Reload in a minute and choose the demo dataset.");
+    } catch (e) {
+      setState({ status: "error", error: describeError(e, "upload datasets") });
+    }
+  };
+  return (
+    <div className="demo-input">
+      <p className="muted">No data of your own yet? Add the demo, {demo.title.toLowerCase()}, to this project as a dataset.</p>
+      <button className="button button-small" disabled={state.status === "working"} onClick={add}>
+        {state.status === "working" ? `${state.note}…` : "Add demo data to this project"}
+      </button>
+      {state.status === "error" && <p className="error-text" role="alert">{state.error}</p>}
+    </div>
   );
 }

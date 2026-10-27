@@ -12,6 +12,7 @@
     { "permission": "RUN_ANALYSIS", "reason": "New build: run this app's pipelines on a project's data" },
     { "permission": "VIEW_DISCUSSION", "reason": "Add a provenance note to the datasets and runs the app creates" },
     { "permission": "CREATE_DISCUSSION", "reason": "Add a provenance note to the datasets and runs the app creates" },
-    { "permission": "CREATE_CUSTOM_PIPELINE", "reason": "Set up a project: register this app's pipelines for it, once, by a member who is a pipeline developer" }
+    { "permission": "CREATE_CUSTOM_PIPELINE", "reason": "Set up a project: register this app's pipelines for it, once, by a member who is a pipeline developer" },
+    { "permission": "MANAGE_CUSTOM_PIPELINES", "reason": "Set up a project whose pipelines are already registered elsewhere: link them to it, or move them to this app's version" }
   ]
 }

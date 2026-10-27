@@ -17,9 +17,12 @@ export function CirroViewerPage({ projectId, datasetId, auspicePath, go }: { pro
     if (!auspice) throw new Error(`${dataset.name} has no Auspice dataset at ${auspicePath}.`);
     return { dataset, auspice };
   }, [cirro, projectId, datasetId, auspicePath]);
+  // Keyed on the loaded value, not the state object useAsync returns anew on every render: a new
+  // source makes the viewer fetch and reload again.
+  const ready = found.status === "ready" ? found.value : null;
   const source = useMemo(
-    () => (found.status === "ready" ? readerSource(auspicePath.split("/").pop()!, `${cirro.tenantName} · ${found.value.dataset.name}`, found.value.auspice, (f) => readFile(cirro, f), filePath) : null),
-    [found, cirro, auspicePath]
+    () => (ready ? readerSource(auspicePath.split("/").pop()!, `${cirro.tenantName} · ${ready.dataset.name}`, ready.auspice, (f) => readFile(cirro, f), filePath) : null),
+    [ready, cirro, auspicePath]
   );
   const [files, setFiles] = useState<File[]>([]);
   const [publishing, setPublishing] = useState(false);

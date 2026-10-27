@@ -1,22 +1,21 @@
 #!/usr/bin/env bash
-# Builds the Nextstrain zika tutorial (34 genomes) and validates the Auspice JSON.
-# Usage: pipelines/build/tests/run.sh [profile]   (default: docker)
+# Builds the Nextstrain zika tutorial (34 genomes, public/demo/zika) and validates the
+# Auspice JSON. With --demo, also refreshes the app's demo build in public/demo/zika-build.
+# Usage: pipelines/build/tests/run.sh [profile] [--demo]   (default profile: docker)
 set -euo pipefail
 
 PROFILE="${1:-docker}"
+REFRESH_DEMO="${2:-}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 # The process-wide container, which is the augur image.
 IMAGE=$(sed -n "s/^ *container *= *'\(.*\)'/\1/p" "$HERE/../nextflow.config" | head -1)
-ZIKA=https://raw.githubusercontent.com/nextstrain/zika-tutorial/c94859b0cc303302362b6cdd27efe503f4ba5523
+DEMO="$HERE/../../../public/demo"
 WORK="$(mktemp -d)"
 cd "$WORK"
 
-mkdir data config
-curl -fsSL "$ZIKA/data/sequences.fasta" -o data/sequences.fasta
-curl -fsSL "$ZIKA/data/metadata.tsv" -o data/metadata.tsv
-for f in auspice_config.json lat_longs.tsv dropped_strains.txt; do
-    curl -fsSL "$ZIKA/config/$f" -o "config/$f"
-done
+mkdir data
+cp "$DEMO/zika/sequences.fasta" "$DEMO/zika/metadata.tsv" data/
+cp -R "$DEMO/zika/config" config
 
 # Cirro always traces, which is what needs ps in the container.
 nextflow run "$HERE/../main.nf" -profile "$PROFILE" -with-trace \
@@ -45,4 +44,7 @@ validate() {
     fi
 }
 validate validate export-v2 output/auspice/zika.json
+if [ "$REFRESH_DEMO" = --demo ]; then
+    cp output/auspice/*.json "$DEMO/zika-build/"
+fi
 echo "PASS: $WORK/output"

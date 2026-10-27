@@ -7,6 +7,7 @@ import { APP_NAME } from "../app/appInfo";
 const WHAT: Record<PipelineState["status"], string> = {
   ready: "ready",
   outdated: "registered for another version of this app; setting up updates it",
+  unconfigured: "registered, but its configuration isn't in Cirro yet",
   unlinked: "registered in this Cirro, not yet for this project",
   archived: "archived",
   missing: "not registered yet",
@@ -50,7 +51,7 @@ export function SetupPanel({ projectId, states, onDone }: { projectId: string; s
         ))}
       </ul>
       <p className="muted">
-        The code comes from {PIPELINE_REPOSITORY} at the version this app was built from. Each pipeline is tagged <code>nextstrain-studio</code> and linked to the projects that set it up.
+        Code and configuration come from {PIPELINE_REPOSITORY} at the version this app was built from. Each pipeline is tagged <code>nextstrain-studio</code> and linked to the projects that set it up. Registering needs permission to add custom pipelines; changing a pipeline that's already registered (linking this project, updating it) also needs permission to manage it.
       </p>
       {state.status === "error" && <p className="error-text" role="alert">{state.error}</p>}
       <button className="button button-primary" disabled={state.status === "working"} onClick={run}>

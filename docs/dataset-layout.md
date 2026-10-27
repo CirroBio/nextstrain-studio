@@ -21,7 +21,7 @@ The app recognizes a dataset's Auspice datasets by file name alone: a `.json` fi
 
 - Pipelines publish main datasets and their sidecars under `auspice/` in their output, and intermediate files (alignment, tree, node data, Nextclade tables) under `results/`.
 - Uploads from the app go under `auspice/` in a Files (`custom_dataset`) dataset tagged `nextstrain-studio`.
-- Files uploaded any other way (the Cirro portal, `cirro upload`) count wherever they sit in the dataset, as long as the names follow the rules above.
+- Files uploaded any other way (the Cirro portal, `cirro upload`) count wherever they sit in the dataset, as long as the names follow the rules above and the main JSON starts the way `augur export v2` writes it (`"version": "v2"` and `"meta"` in its first 4 KB). Gzipped main JSONs in such uploads count only under `auspice/`, since they can't be peeked at.
 
 ## Which Cirro datasets the app looks inside
 

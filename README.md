@@ -21,6 +21,7 @@ Cirro project datasets ───┘        │
 - **viewer/**: [Auspice](https://github.com/nextstrain/auspice), built with this app's customizations into static files (`public/viewer/`). It runs in an `<iframe sandbox>` without `allow-same-origin`, so nothing in a dataset can reach the user's Cirro sign-in; the studio passes it the dataset's files with `postMessage`.
 - **pipelines/**: Nextflow pipelines and their Cirro process configurations: `build`, `build-from-tree`, `nextclade`, `ingest-ncbi`. Parameters are in [docs/pipeline-params.md](docs/pipeline-params.md). The app registers them itself: the first time a project member who may add custom pipelines (a pipeline developer) opens a project, the project page offers to set them up, with the configuration bundled in the app and the code at the commit the app was built from. Until then, builds open and upload but can't be run there.
 - **catalog/**: the public catalog and its checker.
+- **public/demo/**: demo data (the Zika tutorial's sequences and metadata, a tree, and the build made from them) that the app offers for trying pipelines and uploads; see its README.
 - **docs/dataset-layout.md**: what counts as a Nextstrain dataset in Cirro: the contract between the pipelines and the app.
 
 ## Developing

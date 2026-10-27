@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { useSignedIn } from "../cirro/cirro";
 import { useAsync } from "../cirro/useAsync";
 import { projectContents, type Build } from "../cirro/projectBuilds";
@@ -5,6 +6,7 @@ import { portal } from "../cirro/portal";
 import { pipelineStates, isReady } from "../cirro/setup";
 import { UploadBuild } from "./UploadBuild";
 import { SetupPanel } from "./SetupPanel";
+import { DEMO_BUILD, demoFiles } from "./demos";
 import type { Route } from "../app/route";
 
 const when = (d: Date) => d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
@@ -14,6 +16,7 @@ export function ProjectPage({ projectId, go }: { projectId: string; go: (r: Rout
   const project = useAsync(() => cirro.data.projects.getProject({ projectId }), [cirro, projectId]);
   const contents = useAsync(() => projectContents(cirro, projectId), [cirro, projectId]);
   const setup = useAsync(() => pipelineStates(cirro, projectId), [cirro, projectId]);
+  const [uploading, setUploading] = useState(false);
   const name = project.status === "ready" ? project.value.name : "Project";
   const names = new Map(contents.status === "ready" ? [...contents.value.builds, ...contents.value.inputs].map((b) => [b.dataset.id, b.dataset.name]) : []);
 
@@ -23,6 +26,7 @@ export function ProjectPage({ projectId, go }: { projectId: string; go: (r: Rout
         <h1 className="title">{name}</h1>
         <div className="form-actions" style={{ marginTop: 0 }}>
           <button className="button button-primary" onClick={() => go({ page: "new-build", project: projectId })}>New build</button>
+          <button className="button" onClick={() => setUploading(true)}>Upload a build</button>
           <a className="button" href={portal.shares(cirro.tenant.url, projectId)} target="_blank" rel="noreferrer">Share with another project</a>
         </div>
       </div>
@@ -37,7 +41,7 @@ export function ProjectPage({ projectId, go }: { projectId: string; go: (r: Rout
         </div>
         {contents.status === "loading" && <p className="muted">Looking through the project's datasets…</p>}
         {contents.status === "error" && <p className="error-text">{contents.error}</p>}
-        {contents.status === "ready" && contents.value.builds.length === 0 && <p className="muted">No Nextstrain builds yet. Upload one below, or start a new build.</p>}
+        {contents.status === "ready" && contents.value.builds.length === 0 && <p className="muted">No Nextstrain builds yet. Upload one, or start a new build.</p>}
         {contents.status === "ready" && contents.value.builds.length > 0 && (
           <ul className="fact-list">
             {contents.value.builds.map((b) => <BuildRow key={b.dataset.id} build={b} names={names} projectId={projectId} go={go} />)}
@@ -62,13 +66,7 @@ export function ProjectPage({ projectId, go }: { projectId: string; go: (r: Rout
         </section>
       )}
 
-      <section className="panel">
-        <div className="panel-head">
-          <h2>Upload a build</h2>
-          <p className="muted">Add Auspice JSONs you built elsewhere (with <code>nextstrain build</code>, or downloaded) to this project, as a new dataset only its members can see.</p>
-        </div>
-        <UploadBuild projectId={projectId} onDone={() => contents.reload()} />
-      </section>
+      {uploading && <UploadDialog projectId={projectId} onClose={() => setUploading(false)} onDone={contents.reload} />}
     </main>
   );
 }
@@ -92,5 +90,28 @@ function BuildRow({ build, names, projectId, go }: { build: Build; names: Map<st
         ))}
       </div>
     </li>
+  );
+}
+
+function UploadDialog({ projectId, onClose, onDone }: { projectId: string; onClose: () => void; onDone: () => void }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const [demo, setDemo] = useState<File[] | null>(null);
+  const [demoError, setDemoError] = useState("");
+  useEffect(() => dialog.current?.showModal(), []);
+  return (
+    <dialog ref={dialog} className="card dialog" onClose={onClose}>
+      <h2 className="title">Upload a build</h2>
+      <p className="muted">Add Auspice JSONs you built elsewhere (with <code>nextstrain build</code>, or downloaded) to this project, as a new dataset only its members can see.</p>
+      {demo ? <UploadBuild projectId={projectId} files={demo} onDone={onDone} /> : <UploadBuild projectId={projectId} onDone={onDone} />}
+      {!demo && (
+        <p className="muted">
+          Or try it with <button className="link-button" onClick={() => demoFiles(DEMO_BUILD).then(setDemo, (e) => setDemoError(e instanceof Error ? e.message : String(e)))}>the demo build</button> ({DEMO_BUILD.title}).
+        </p>
+      )}
+      {demoError && <p className="error-text">{demoError}</p>}
+      <div className="form-actions">
+        <button className="button" onClick={() => dialog.current?.close()}>Close</button>
+      </div>
+    </dialog>
   );
 }

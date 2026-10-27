@@ -296,3 +296,4 @@ button.crumb:hover { color: var(--cal-color-text); }
 .dialog::backdrop { background: rgb(0 0 0 / 0.35); }
 .dialog h3 { margin-bottom: var(--cal-space-2); }
 details summary { cursor: pointer; font-weight: var(--cal-weight-medium); }
+.demo-input { margin-top: var(--cal-space-3); display: grid; gap: var(--cal-space-1); justify-items: start; }

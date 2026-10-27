@@ -64,6 +64,24 @@ export async function readFile(cirro: Cirro, file: FileSystemObject): Promise<Bl
   return res.blob();
 }
 
+// The first bytes of a file, by one ranged read, so a large file isn't downloaded to look at it.
+export async function readHead(cirro: Cirro, file: FileSystemObject, bytes: number): Promise<string> {
+  const url = await retryRateLimited(() => cirro.files.getSignedUrlFromProjectFile(file));
+  const res = await fetch(url, { headers: { Range: `bytes=0-${bytes - 1}` } });
+  if (!res.ok) throw new Error(`Couldn't read ${filePath(file)} (HTTP ${res.status}).`);
+  return res.text();
+}
+
+// augur export writes "version": "v2" and then "meta" first, so the head of the file tells an
+// Auspice dataset from other JSON. Gzipped files can't be peeked at, so they count only in an
+// auspice/ folder.
+const AUSPICE_HEAD_BYTES = 4096;
+async function looksLikeAuspice(cirro: Cirro, file: FileSystemObject): Promise<boolean> {
+  if (filePath(file).endsWith(".gz")) return /(^|\/)auspice\//.test(filePath(file));
+  const head = await readHead(cirro, file, AUSPICE_HEAD_BYTES);
+  return /"version"\s*:\s*"v2"/.test(head) && /"meta"\s*:/.test(head);
+}
+
 export type Build = { dataset: Dataset; process: string; auspice: AuspiceDataset<FileSystemObject>[] };
 
 export type ProjectContents = {
@@ -93,7 +111,11 @@ export async function projectContents(cirro: Cirro, projectId: string): Promise<
   const scanned = await inBatches(candidates, SCAN_CONCURRENCY, async (dataset) => {
     // A pipeline's results/ holds node-data JSONs, which aren't datasets.
     const files = (await datasetFiles(cirro, projectId, dataset.id)).filter((f) => !ours(dataset) || filePath(f).startsWith("auspice/"));
-    return { dataset, process: processName(dataset), auspice: groupAuspiceFiles(files, filePath) };
+    const groups = groupAuspiceFiles(files, filePath);
+    // Files uploads from anywhere hold all sorts of JSON; only what reads as Auspice counts there.
+    const trusted = ours(dataset) || isAppTagged(dataset);
+    const auspice = trusted ? groups : (await Promise.all(groups.map(async (g) => ((await looksLikeAuspice(cirro, g.main)) ? g : null)))).filter((g) => g !== null);
+    return { dataset, process: processName(dataset), auspice };
   });
   return {
     builds: scanned.filter((b) => b.auspice.length > 0),

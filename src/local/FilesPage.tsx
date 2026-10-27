@@ -1,12 +1,14 @@
 import { useMemo, useRef, useState, type DragEvent, type ReactNode } from "react";
 import { localSource } from "../viewer/sources";
 import { ViewerPage } from "../viewer/ViewerPage";
+import { DEMO_BUILD, demoFiles } from "../project/demos";
 
 // Files the user drops stay in this tab: they're read by the viewer and go to Cirro only if the
 // user saves them there (the `actions` the app passes in).
 export function FilesPage({ actions }: { actions?: (files: File[]) => ReactNode }) {
   const [files, setFiles] = useState<File[] | null>(null);
   const [over, setOver] = useState(false);
+  const [demoError, setDemoError] = useState("");
   const input = useRef<HTMLInputElement>(null);
   const source = useMemo(() => (files ? localSource(files) : null), [files]);
 
@@ -34,6 +36,10 @@ export function FilesPage({ actions }: { actions?: (files: File[]) => ReactNode 
         <button className="button" onClick={() => input.current?.click()}>Choose files</button>
         <input ref={input} type="file" multiple hidden onChange={(e) => e.target.files?.length && setFiles(Array.from(e.target.files))} />
       </div>
+      <p className="muted section">
+        No build at hand? Open <button className="link-button" onClick={() => demoFiles(DEMO_BUILD).then(setFiles, (e) => setDemoError(e instanceof Error ? e.message : String(e)))}>the demo build</button>: {DEMO_BUILD.description}
+      </p>
+      {demoError && <p className="error-text">{demoError}</p>}
     </main>
   );
 }
