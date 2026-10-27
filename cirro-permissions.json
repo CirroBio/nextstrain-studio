@@ -1,0 +1,17 @@
+{
+  "app": "nextstrain-studio",
+  "scope": "project",
+  "required": [
+    { "permission": "VIEW_PROJECT", "reason": "List the projects the signed-in user can open" },
+    { "permission": "VIEW_DATASET", "reason": "Find the Nextstrain builds, inputs and runs in a project, and list their files" },
+    { "permission": "VIEW_PROCESS", "reason": "Name the pipelines datasets came from, and check whether this app's pipelines are set up in a project" },
+    { "permission": "GENERATE_DOWNLOAD_TOKEN", "reason": "Read Auspice JSONs into the viewer, and the header of a metadata table to offer its columns" }
+  ],
+  "optional": [
+    { "permission": "CREATE_DATASET", "reason": "Upload a build, or save opened files, to a project" },
+    { "permission": "RUN_ANALYSIS", "reason": "New build: run this app's pipelines on a project's data" },
+    { "permission": "VIEW_DISCUSSION", "reason": "Add a provenance note to the datasets and runs the app creates" },
+    { "permission": "CREATE_DISCUSSION", "reason": "Add a provenance note to the datasets and runs the app creates" },
+    { "permission": "CREATE_CUSTOM_PIPELINE", "reason": "Set up a project: register this app's pipelines for it, once, by a member who is a pipeline developer" }
+  ]
+}

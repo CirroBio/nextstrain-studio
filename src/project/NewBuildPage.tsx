@@ -4,14 +4,16 @@ import type { Dataset } from "@cirrobio/api-client";
 import buildForm from "../../pipelines/build/cirro/process-form.json";
 import { describeError, useSignedIn } from "../cirro/cirro";
 import { useAsync } from "../cirro/useAsync";
-import { PIPELINES, datasetFiles, filePath, listDatasets, listProcesses, pipelineProcess } from "../cirro/projectBuilds";
+import { datasetFiles, filePath, listDatasets } from "../cirro/projectBuilds";
+import { pipelineDefinition, type PipelineKey } from "../cirro/pipelines";
+import { pipelineStates } from "../cirro/setup";
 import { launch, tableColumns } from "../cirro/launch";
 import { portal } from "../cirro/portal";
 import type { Route } from "../app/route";
 
 // Launches one of this repo's pipelines (pipelines/, parameters in docs/pipeline-params.md).
 
-type Kind = keyof typeof PIPELINES;
+type Kind = PipelineKey;
 type Role = "sequences" | "metadata" | "tree" | "alignment" | "reference";
 
 const KINDS: { kind: Kind; title: string; text: string; needs: Role[] }[] = [
@@ -58,10 +60,12 @@ export function NewBuildPage({ projectId, go }: { projectId: string; go: (r: Rou
   const [kind, setKind] = useState<Kind>("build");
   const spec = KINDS.find((k) => k.kind === kind)!;
   const setup = useAsync(async () => {
-    const [processes, datasets, project] = await Promise.all([listProcesses(cirro), listDatasets(cirro, projectId), cirro.data.projects.getProject({ projectId })]);
-    return { processes, datasets: datasets.filter((d) => d.status === "COMPLETED"), project };
+    const [states, datasets, project] = await Promise.all([pipelineStates(cirro, projectId), listDatasets(cirro, projectId), cirro.data.projects.getProject({ projectId })]);
+    return { states, datasets: datasets.filter((d) => d.status === "COMPLETED"), project };
   }, [cirro, projectId]);
-  const process = setup.status === "ready" ? pipelineProcess(setup.value.processes, PIPELINES[kind]) : null;
+  const definition = pipelineDefinition(kind);
+  const ready = setup.status === "ready" && setup.value.states.find((s) => s.definition.key === kind)?.status === "ready";
+  const process = ready ? { id: definition.id, name: definition.name } : null;
   const [inputId, setInputId] = useState("");
   const input = setup.status === "ready" ? setup.value.datasets.find((d) => d.id === inputId) ?? null : null;
 
@@ -88,7 +92,7 @@ export function NewBuildPage({ projectId, go }: { projectId: string; go: (r: Rou
       {setup.status === "error" && <p className="error-text">{setup.error}</p>}
       {setup.status === "ready" && !process && (
         <p className="notice">
-          The "{PIPELINES[kind]}" pipeline isn't available in {cirro.tenantName} yet. A Cirro admin adds it from this app's repository (pipelines/README.md).
+          "{definition.name}" isn't set up in this project yet. A member who may add custom pipelines sets it up once, from <button className="link-button" onClick={() => go({ page: "project", project: projectId })}>the project page</button>.
         </p>
       )}
       {setup.status === "ready" && process && (

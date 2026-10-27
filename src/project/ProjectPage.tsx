@@ -2,7 +2,9 @@ import { useSignedIn } from "../cirro/cirro";
 import { useAsync } from "../cirro/useAsync";
 import { projectContents, type Build } from "../cirro/projectBuilds";
 import { portal } from "../cirro/portal";
+import { pipelineStates, isReady } from "../cirro/setup";
 import { UploadBuild } from "./UploadBuild";
+import { SetupPanel } from "./SetupPanel";
 import type { Route } from "../app/route";
 
 const when = (d: Date) => d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
@@ -11,6 +13,7 @@ export function ProjectPage({ projectId, go }: { projectId: string; go: (r: Rout
   const cirro = useSignedIn();
   const project = useAsync(() => cirro.data.projects.getProject({ projectId }), [cirro, projectId]);
   const contents = useAsync(() => projectContents(cirro, projectId), [cirro, projectId]);
+  const setup = useAsync(() => pipelineStates(cirro, projectId), [cirro, projectId]);
   const name = project.status === "ready" ? project.value.name : "Project";
   const names = new Map(contents.status === "ready" ? [...contents.value.builds, ...contents.value.inputs].map((b) => [b.dataset.id, b.dataset.name]) : []);
 
@@ -24,6 +27,8 @@ export function ProjectPage({ projectId, go }: { projectId: string; go: (r: Rout
         </div>
       </div>
       {project.status === "error" && <p className="error-text">Couldn't open this project: {project.error}</p>}
+      {setup.status === "error" && <p className="error-text">Couldn't check this project's pipelines: {setup.error}</p>}
+      {setup.status === "ready" && !isReady(setup.value) && <SetupPanel projectId={projectId} states={setup.value} onDone={setup.reload} />}
 
       <section className="panel">
         <div className="panel-head">

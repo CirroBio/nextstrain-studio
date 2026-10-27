@@ -27,7 +27,7 @@ The app recognizes a dataset's Auspice datasets by file name alone: a `.json` fi
 
 Listing every file of every dataset is slow, so the app looks only at completed datasets that match one of these:
 
-- made by one of this repo's pipelines, recognized by **process name** (IDs differ between tenants): `Nextstrain build`, `Nextstrain build from tree`, `Nextclade`, `Nextstrain NCBI Virus ingest`;
+- made by one of this repo's pipelines, recognized by process ID, which is the same in every tenant because the app registers the pipelines itself: `nextstrain-studio-build`, `nextstrain-studio-build-from-tree`, `nextstrain-studio-nextclade`, `nextstrain-studio-ingest-ncbi`;
 - tagged `nextstrain-studio`;
 - Files (`custom_dataset`) uploads.
 

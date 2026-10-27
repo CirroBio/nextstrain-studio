@@ -5,7 +5,7 @@ Nextstrain Studio: a Cirro OAuth app (static React/Vite) that embeds Auspice, pl
 ## Contracts
 
 - `docs/dataset-layout.md` (what counts as a Nextstrain dataset in Cirro) and `docs/pipeline-params.md` (each pipeline's parameter keys) are the interface between `pipelines/` and `src/`. Change the doc in the same change as either side.
-- The app recognizes its pipelines by process **name**, not ID (`PIPELINES` in `src/cirro/projectBuilds.ts`), since IDs differ between tenants. Registered names must match exactly.
+- The app registers its own pipelines, per project, from `src/cirro/pipelines.ts`: fixed process IDs, the Cirro config files in `pipelines/*/cirro/` bundled into the build (config source STORAGE), and the code at the commit the app was built from. Nothing is registered from outside the app; a project is set up the first time a member with permission to add custom pipelines opens it (`src/cirro/setup.ts`, `SetupPanel`). Tell users when a project still needs that.
 - The build page reads the reference presets from `pipelines/build/cirro/process-form.json`, so the Cirro form and the app offer the same list.
 - The viewer protocol is two messages, `ns-viewer:ready` and `ns-viewer:load` (`viewer/ext/splash.js`, `src/viewer/ViewerFrame.tsx`). Change both together.
 

@@ -2,18 +2,13 @@ import { ManifestParser, ProjectFileAccessContext, type FileSystemObject } from 
 import { Status, type Dataset, type Process } from "@cirrobio/api-client";
 import { retryRateLimited, type Cirro } from "./cirro";
 import { groupAuspiceFiles, type AuspiceDataset } from "../viewer/auspiceFiles";
+import { PIPELINE_DEFINITIONS } from "./pipelines";
 import { APP_ID } from "../app/appInfo";
 
-// What a project holds, as this app sees it (docs/dataset-layout.md). Process IDs differ between
-// tenants, so this repo's pipelines are recognized by name.
+// What a project holds, as this app sees it (docs/dataset-layout.md). This app's pipelines have
+// the same process IDs in every tenant, because the app registers them itself.
 
-export const PIPELINES = {
-  build: "Nextstrain build",
-  buildFromTree: "Nextstrain build from tree",
-  nextclade: "Nextclade",
-  ingest: "Nextstrain NCBI Virus ingest",
-} as const;
-const PIPELINE_NAMES: string[] = Object.values(PIPELINES);
+const PIPELINE_IDS = PIPELINE_DEFINITIONS.map((p) => p.id);
 export const FILES_PROCESS = "custom_dataset";
 
 // Datasets whose files are listed at once; more would trip the per-user rate limit.
@@ -32,7 +27,7 @@ export async function listDatasets(cirro: Cirro, projectId: string): Promise<Dat
 
 // Cached per session; a failed request is forgotten so that trying again asks Cirro again.
 const processes = new WeakMap<Cirro, Promise<Process[]>>();
-export function listProcesses(cirro: Cirro): Promise<Process[]> {
+function listProcesses(cirro: Cirro): Promise<Process[]> {
   let cached = processes.get(cirro);
   if (!cached) {
     cached = retryRateLimited(() => cirro.data.processes.getProcesses({}));
@@ -41,8 +36,6 @@ export function listProcesses(cirro: Cirro): Promise<Process[]> {
   }
   return cached;
 }
-
-export const pipelineProcess = (all: Process[], name: string) => all.find((p) => p.name === name && !p.isArchived) ?? null;
 
 // The dataset's detail says whether it is shared from another project, which decides how its
 // files are read.
@@ -79,7 +72,6 @@ export type ProjectContents = {
   running: { dataset: Dataset; process: string }[];
   // Completed datasets that may hold sequences and metadata to build from.
   inputs: { dataset: Dataset; process: string }[];
-  processes: Process[];
 };
 
 const isAppTagged = (d: Dataset) => d.tags.some((t) => t.value === APP_ID);
@@ -95,7 +87,7 @@ export async function projectContents(cirro: Cirro, projectId: string): Promise<
   const names = new Map(all.map((p) => [p.id, p.name]));
   const processName = (d: Dataset) => names.get(d.processId) ?? d.processId;
   const newest = (a: Dataset, b: Dataset) => +b.createdAt - +a.createdAt;
-  const ours = (d: Dataset) => PIPELINE_NAMES.includes(processName(d));
+  const ours = (d: Dataset) => PIPELINE_IDS.includes(d.processId);
   const done = datasets.filter((d) => d.status === Status.Completed).sort(newest);
   const candidates = done.filter((d) => ours(d) || isAppTagged(d) || d.processId === FILES_PROCESS);
   const scanned = await inBatches(candidates, SCAN_CONCURRENCY, async (dataset) => {
@@ -107,6 +99,5 @@ export async function projectContents(cirro: Cirro, projectId: string): Promise<
     builds: scanned.filter((b) => b.auspice.length > 0),
     running: datasets.filter((d) => ours(d) && d.status !== Status.Completed).sort(newest).map((d) => ({ dataset: d, process: processName(d) })),
     inputs: done.filter((d) => !scanned.some((b) => b.dataset.id === d.id && b.auspice.length > 0)).map((d) => ({ dataset: d, process: processName(d) })),
-    processes: all,
   };
 }

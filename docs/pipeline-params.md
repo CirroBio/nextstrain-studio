@@ -32,7 +32,7 @@ match `^[A-Za-z0-9][A-Za-z0-9_.-]*$` and must not end in `_tip-frequencies`,
 
 ## Nextstrain build
 
-Process name `Nextstrain build`, `pipelines/build/`.
+Process `nextstrain-studio-build` ("Nextstrain build"), `pipelines/build/`.
 
 ### Inputs
 
@@ -111,7 +111,7 @@ Fetched at run time from the Nextstrain pathogen repos, each pinned to a commit.
 
 ## Nextstrain build from tree
 
-Process name `Nextstrain build from tree`, `pipelines/build-from-tree/`.
+Process `nextstrain-studio-build-from-tree` ("Nextstrain build from tree"), `pipelines/build-from-tree/`.
 
 | Key | Type | Default | Meaning |
 | --- | --- | --- | --- |
@@ -139,7 +139,7 @@ alignment); `results/tree.nwk`, `results/branch_lengths.json`, `results/nt_muts.
 
 ## Nextclade
 
-Process name `Nextclade`, `pipelines/nextclade/`.
+Process `nextstrain-studio-nextclade` ("Nextclade"), `pipelines/nextclade/`.
 
 | Key | Type | Default | Meaning |
 | --- | --- | --- | --- |
@@ -154,7 +154,7 @@ it; only for datasets that ship a `tree.json`), `results/nextclade.tsv`,
 
 ## Nextstrain NCBI Virus ingest
 
-Process name `Nextstrain NCBI Virus ingest`, `pipelines/ingest-ncbi/`. Reads nothing
+Process `nextstrain-studio-ingest-ncbi` ("Nextstrain NCBI Virus ingest"), `pipelines/ingest-ncbi/`. Reads nothing
 from its input dataset, so `input` is not mapped.
 
 | Key | Type | Default | Meaning |

@@ -19,7 +19,7 @@ Cirro project datasets ───┘        │
 
 - **src/**: the studio, a static React app. It signs in with Cirro (OAuth, PKCE, no backend), finds Nextstrain builds in projects, uploads, launches pipelines, and fetches public datasets.
 - **viewer/**: [Auspice](https://github.com/nextstrain/auspice), built with this app's customizations into static files (`public/viewer/`). It runs in an `<iframe sandbox>` without `allow-same-origin`, so nothing in a dataset can reach the user's Cirro sign-in; the studio passes it the dataset's files with `postMessage`.
-- **pipelines/**: Nextflow pipelines and their Cirro process configurations: `build`, `build-from-tree`, `nextclade`, `ingest-ncbi`. Parameters are in [docs/pipeline-params.md](docs/pipeline-params.md).
+- **pipelines/**: Nextflow pipelines and their Cirro process configurations: `build`, `build-from-tree`, `nextclade`, `ingest-ncbi`. Parameters are in [docs/pipeline-params.md](docs/pipeline-params.md). The app registers them itself: the first time a project member who may add custom pipelines (a pipeline developer) opens a project, the project page offers to set them up, with the configuration bundled in the app and the code at the commit the app was built from. Until then, builds open and upload but can't be run there.
 - **catalog/**: the public catalog and its checker.
 - **docs/dataset-layout.md**: what counts as a Nextstrain dataset in Cirro: the contract between the pipelines and the app.
 
@@ -41,6 +41,8 @@ npm run build
 The pipelines run locally with Docker; see each `pipelines/<name>/README.md`.
 
 ## Deploying
+
+The pipelines run in `ghcr.io/cirrobio/nextstrain-studio-base` (nextstrain/base plus `ps`, which Nextflow needs on Cirro), built by `.github/workflows/container.yml`. Cirro pulls it without credentials, so the package must be public. While this repository is private, Cirro can read the pipeline code only in tenants where Cirro's GitHub app is authorized for CirroBio; `PIPELINE_REPOSITORY_TYPE` in `src/cirro/pipelines.ts` changes to `GITHUB_PUBLIC` when it is published.
 
 `.github/workflows/pages.yml` tests, builds and publishes to GitHub Pages from `main`, with `deploy/tenants.json` as the tenant list. Each tenant whose users should sign in registers the production callback URL (the Pages address plus `/nextstrain-studio/`) with discovery enabled; see the Cirro app kit's deployment guide.
 
