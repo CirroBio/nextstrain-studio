@@ -152,9 +152,9 @@ Outputs: `auspice/<name>.json` (the dataset's reference tree with the sequences 
 it; only for datasets that ship a `tree.json`), `results/nextclade.tsv`,
 `results/nextclade.aligned.fasta`, `results/translations/<cds>.translation.fasta`.
 
-## Nextstrain: NCBI Virus ingest
+## Nextstrain NCBI Virus ingest
 
-Process name `Nextstrain: NCBI Virus ingest`, `pipelines/ingest-ncbi/`. Reads nothing
+Process name `Nextstrain NCBI Virus ingest`, `pipelines/ingest-ncbi/`. Reads nothing
 from its input dataset, so `input` is not mapped.
 
 | Key | Type | Default | Meaning |

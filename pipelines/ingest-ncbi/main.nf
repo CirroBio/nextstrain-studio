@@ -35,7 +35,7 @@ METADATA_COLUMNS = [
 
 def helpMessage() {
     log.info """
-    Nextstrain: NCBI Virus ingest
+    Nextstrain NCBI Virus ingest
     =============================
 
     Fetches virus genomes and their metadata from NCBI Virus with NCBI Datasets, and

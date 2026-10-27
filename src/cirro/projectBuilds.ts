@@ -11,7 +11,7 @@ export const PIPELINES = {
   build: "Nextstrain build",
   buildFromTree: "Nextstrain build from tree",
   nextclade: "Nextclade",
-  ingest: "Nextstrain: NCBI Virus ingest",
+  ingest: "Nextstrain NCBI Virus ingest",
 } as const;
 const PIPELINE_NAMES: string[] = Object.values(PIPELINES);
 export const FILES_PROCESS = "custom_dataset";

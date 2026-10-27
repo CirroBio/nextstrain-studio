@@ -1,4 +1,4 @@
-# Nextstrain: NCBI Virus ingest
+# Nextstrain NCBI Virus ingest
 
 Fetches virus genomes and metadata for an NCBI taxon from NCBI Virus with
 [NCBI Datasets](https://www.ncbi.nlm.nih.gov/datasets/), and curates them with
@@ -52,10 +52,10 @@ to NCBI, and the record count grows as NCBI adds records.
 
 | Setting | Value |
 | --- | --- |
-| Name | `Nextstrain: NCBI Virus ingest` |
+| Name | `Nextstrain NCBI Virus ingest` |
 | Entry point | `pipelines/ingest-ncbi/main.nf` |
 | Configuration folder | `pipelines/ingest-ncbi/cirro` |
 | Executor | Nextflow |
 
-The name has to be exactly `Nextstrain: NCBI Virus ingest`. The pipeline reads nothing
+The name has to be exactly `Nextstrain NCBI Virus ingest`. The pipeline reads nothing
 from its input dataset, so `process-input.json` doesn't map one.

@@ -1,7 +1,7 @@
 {
   "form": {
     "type": "object",
-    "name": "Nextstrain: NCBI Virus ingest",
+    "name": "Nextstrain NCBI Virus ingest",
     "properties": {
       "taxon_id": {
         "title": "NCBI taxon",
